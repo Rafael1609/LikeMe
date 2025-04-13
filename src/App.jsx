@@ -13,6 +13,7 @@ function App() {
 
   const getPosts = async () => {
     const { data: posts } = await axios.get(urlBaseServer + "/posts");
+    console.log("Posts obtenidos:", posts);
     setPosts([...posts]);
   };
 

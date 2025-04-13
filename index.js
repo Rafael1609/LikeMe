@@ -20,7 +20,7 @@ const pool = new Pool({
 // Ruta GET: Obtener todos los posts
 app.get("/posts", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM posts");
+    const result = await pool.query("SELECT * FROM posts order by id asc");
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -36,6 +36,32 @@ app.post("/posts", async (req, res) => {
       [titulo, img, descripcion]
     );
     res.status(201).json({ message: "Post agregado exitosamente" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put("/posts/like/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      "update posts set likes = likes + 1 where id = $1 returning *",
+      [id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete("/posts/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      "DELETE FROM posts WHERE id = $1 returning *",
+      [id]
+    );
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
